@@ -1,0 +1,43 @@
+#include <Servo.h>
+
+const int gasSensorPin = A0;
+const int buzzerPin = 8;
+const int servoPin = 9;
+const int fanPin = 10;
+const int redLedPin = 13;
+const int greenLedPin = 6;
+int gasThreshold = 400; // Adjust this value according to your sensor's specifications
+
+Servo gasValve;
+
+void setup() {
+  pinMode(gasSensorPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(fanPin, OUTPUT);
+  pinMode(redLedPin, OUTPUT);
+  pinMode(greenLedPin, OUTPUT);
+  gasValve.attach(servoPin);
+  gasValve.write(0); // Ensure valve is closed initially
+  Serial.begin(9600);
+}
+
+void loop() {
+  int gasLevel = analogRead(gasSensorPin);
+  Serial.println(gasLevel);
+
+  if (gasLevel > gasThreshold) {
+    digitalWrite(buzzerPin, HIGH);
+    digitalWrite(fanPin, HIGH);
+    digitalWrite(redLedPin, HIGH);
+    digitalWrite(greenLedPin, LOW);
+    gasValve.write(90); // Rotate the servo to close the gas valve
+  } else {
+    digitalWrite(buzzerPin, LOW);
+    digitalWrite(fanPin, LOW);
+    digitalWrite(redLedPin, LOW);
+    digitalWrite(greenLedPin, HIGH);
+    gasValve.write(0); // Ensure valve remains closed
+  }
+
+  delay(1000); // Adjust the delay as necessary
+}
